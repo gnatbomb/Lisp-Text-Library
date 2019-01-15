@@ -1,8 +1,12 @@
 
+
+
+
+; Question 1
 ; issorted(L)
 ;	if null (cdr L) then T					#if the next element is nil, then list is sorted
 ;	else if (> (car L) (car (cdr L))) then NIL		#if the current front element is > next element, list is not sorted. return nil.
-;	else issorted(cdr L)
+;	else issorted(cdr L)					#recursive call on list excluding first element
 ;	
 ;
 
@@ -15,4 +19,63 @@
 		)
 	)
 )
-			
+
+
+;Question 2
+; numbers(N)
+;	if (>= 0 N) then NIL				#N is 0 or less
+;	else (append (numbers(N - 1)) (cons N NIL))	#Adds N to the end of the return list. Decrements N and makes recursive call.
+
+(defun numbers(N)
+	(if (>= 0 N)
+		NIL
+		(append (numbers (- N 1)) (cons N NIL))
+	)
+)
+
+
+;Question 3							#reverse the list using helper function defined as myreverse, then compare using equals function
+;
+;myreverse(L)							#reverses the order of a list
+;	if (null L) then L					#if at end of list, stop recursing
+;	else (append (myreverse (cdr L)) (cons (car L) NIL))	#add current first element to end of list, and recurse on remaining elements
+;
+;palindrome(L)
+;	equal (L myreverse(L))					#sees if the list is identical to itself when reversed.	
+
+(defun myreverse(L)
+	(if (null L)
+		L
+		(append (myreverse (cdr L)) (cons (car L) NIL))
+	)
+)
+
+(defun palindrome(L)
+	(equal L (myreverse L))
+)
+
+
+;Question 4
+;
+;replace1(A B L)			#replaces all instances of A with B in given List L, ignoring sublists
+;	if (null L) then L		#ceases recursive call at end of list
+;	else 
+;		(if (eq (car L) A) then (append B (replace1 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
+;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)			#First element in L isnt A. add it to list, and recurse on (cdr L)
+
+(defun replace1(A B L)
+	(if (null L)
+		L
+		(if (eq (car L) A)
+			(append (cons B NIL) (replace1 A B (cdr L)))
+			(append (cons (car L) NIL) (replace1 A B (cdr L)))
+		)
+	)
+)
+
+;
+;replace2(A B L)			#replaces all instances of A with B in given List L, including sublists
+;	if (null L) then L		#ceases recursive call at end of list
+;	else 
+;		(if (eq (car L) A) then (append B (replace1 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
+;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)			#First element in L isnt A. add it to list, and recurse on (cdr L)
