@@ -61,7 +61,7 @@
 ;	if (null L) then L		#ceases recursive call at end of list
 ;	else 
 ;		(if (eq (car L) A) then (append B (replace1 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
-;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)			#First element in L isnt A. add it to list, and recurse on (cdr L)
+;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
 
 (defun replace1(A B L)
 	(if (null L)
@@ -77,5 +77,20 @@
 ;replace2(A B L)			#replaces all instances of A with B in given List L, including sublists
 ;	if (null L) then L		#ceases recursive call at end of list
 ;	else 
-;		(if (eq (car L) A) then (append B (replace1 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
-;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)			#First element in L isnt A. add it to list, and recurse on (cdr L)
+;		(if (atom (car L)		#if the first element of L is an atom, proceed as in replace1. Else, recurse on that list
+;			(if (eq (car L) A) then (append B (replace2 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
+;			else (append (cons (car L) NIL) (replace2 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
+;		else (append (cons (replace2(A B (car L) NIL) (replace2 A B (cdr L)) NIL))	#recurses on first element of list, then proceeds accordingly
+
+(defun replace2(A B L)
+	(if (null L)
+		L
+		(if (atom (car L))
+			(if (eq (car L) A)
+				(append (cons B NIL) (replace2 A B (cdr L)))
+				(append (cons (car L) NIL) (replace2 A B (cdr L)))
+			)
+			(append (cons (replace2 A B (car L)) NIL) (replace2 A B (cdr L)))
+		)
+	)
+)
