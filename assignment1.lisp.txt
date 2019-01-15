@@ -1,0 +1,18 @@
+
+; issorted(L)
+;	if null (cdr L) then T					#if the next element is nil, then list is sorted
+;	else if (> (car L) (car (cdr L))) then NIL		#if the current front element is > next element, list is not sorted. return nil.
+;	else issorted(cdr L)
+;	
+;
+
+(defun issorted (L)
+	(if (null (cdr L))
+		T
+		(if (>= (car L) (cadr L))
+			NIL
+			(issorted (cdr L))
+		)
+	)
+)
+			
