@@ -94,3 +94,21 @@
 		)
 	)
 )
+
+
+;
+;common(A B)				#counts how many atoms in list A are also in list B. Atoms in a list never repeat.
+;	if (null A) then 0		#A has no more elements, so no elements in common with B
+;	else if (null (member (car A) B)) then (common (cdr A) B))	#returns true if car(A) is not in B, and recurses on cdr(A)
+;	else 1 + (common (cdr A) B))					#if car(A) was in B, then adds 1 and recurses on cdr(A)
+;
+
+(defun common(A B)
+	(if (null A)
+		0
+		(if (null (member (car A) B))
+			(common (cdr A) B)
+			(+ 1 (common (cdr A) B))
+		)
+	)
+)
