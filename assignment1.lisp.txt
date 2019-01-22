@@ -96,6 +96,7 @@
 )
 
 
+;Question 5
 ;
 ;common(A B)				#counts how many atoms in list A are also in list B. Atoms in a list never repeat.
 ;	if (null A) then 0		#A has no more elements, so no elements in common with B
@@ -112,3 +113,18 @@
 		)
 	)
 )
+
+
+;
+;Question 6
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
