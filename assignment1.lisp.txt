@@ -118,11 +118,52 @@
 ;
 ;Question 6
 ;
+;This function should follow the following steps:
+;	1) Transform N into a list U
+;	2) Until U is empty:
+;		a) Find the number of overlapping values between U and each subset of S, and put them in a list O
+;		b) Traverse O to find the index of the highest number.
+;		c) Locate the subset A in S with the most overlapping values with U. 
+;		d) remove A from S, remove overlapping values between U and A from U
+;		e) Store A in SOL (solution)
+;		f) recurse on new U and S lists
+;	3) return SOL
+;
+;
+;
+;common(A B)				#counts how many atoms in list A are also in list B. Atoms in a list never repeat.
+;	if (null A) then 0		#A has no more elements, so no elements in common with B
+;	else if (null (member (car A) B)) then (common (cdr A) B))	#returns true if car(A) is not in B, and recurses on cdr(A)
+;	else 1 + (common (cdr A) B))					#if car(A) was in B, then adds 1 and recurses on cdr(A)
+;
+;
+;numbers(N)
+;	if (>= 0 N) then NIL				#N is 0 or less
+;	else (append (numbers(N - 1)) (cons N NIL))	#Adds N to the end of the return list. Decrements N and makes recursive call.
+;
+;
+;setcover(N S)			#returns a set of subsets of S which span all numbers <= N greedily
+;	getcover((numbers N) S)		#puts N into a list and calls getcover which actually does the recursion. This is step 1 in solution outline
+;
+;
+;maxind(O)			#returns the index of the largest value in a list
+;
+;getoverlap(S U)
+;	if (null S) then S	#no more subsets of S left. stop recursing
+;	else (append (cons (common (car S) U) NIL) (getoverlap((cdr S) U)))		#returns overlap of current element as well as recurses onto next element
 ;
 ;
 ;
 ;
-;
+;getcover(U S)				#returns the set of subsets of S which span list of numbers N. 
+;	if (null U) then NIL		#N is already spanned. Stop recursion. This is step 2 in solution outline.
+;	let (O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
+;	let (ind maxind(O))		#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
+;	
+;	
+;	
+;	
+;	
 ;
 ;
 ;
