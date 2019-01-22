@@ -118,15 +118,16 @@
 ;
 ;Question 6
 ;
-;This function should follow the following steps:
-;	1) Transform N into a list U
+;This function solution should follow the following steps:
+;	1) Transform N into a list U				(done)
 ;	2) Until U is empty:
-;		a) Find the number of overlapping values between U and each subset of S, and put them in a list O
-;		b) Traverse O to find the index of the highest number.
-;		c) Locate the subset A in S with the most overlapping values with U. 
-;		d) remove A from S, remove overlapping values between U and A from U
-;		e) Store A in SOL (solution)
-;		f) recurse on new U and S lists
+;		a) Find the number of overlapping values between U and each subset of S, and put them in a list O	(done)
+;		b) Traverse O to find the index of the highest number.							(done)
+;		c) Locate the subset A in S with the most overlapping values with U. 					(done)
+;		d) remove A from S											(done)
+;		e) remove overlapping values between U and A from U							
+;		f) Store A in SOL (solution)
+;		g) recurse on new U and S lists
 ;	3) return SOL
 ;
 ;
@@ -146,26 +147,76 @@
 ;	getcover((numbers N) S)		#puts N into a list and calls getcover which actually does the recursion. This is step 1 in solution outline
 ;
 ;
-;maxind(O)			#returns the index of the largest value in a list
+;maxind(O)			#returns the index of the largest value in list O. this is 2b in solution outline
+;	let (maxval maxinlist(O))
+;	valind(maxval O)
+;	
 ;
-;getoverlap(S U)
+;valind(val O)			#returns the index of the first instance of val in O
+;	if (null O) then O
+;	else if (eq (car O) val) then 0
+;	else 1 + valind(val (cdr O))
+;
+;
+;
+;
+;maxinlist(O)			#returns the value of the largest element in the list O
+;	if (null O) then 0
+;	let (best maxinlist(cdr O))
+;	if (< best (car O)) then (car O)
+;	else then best
+;
+;getind(ind S)			# returns the element of S at index ind
+;	if (<= ind 0) then (car S)
+;	else (getind((ind - 1) (cdr S)))
+;
+;
+;removeoverlap(A U)		#removes all elements from U which also appear in A
+;	if (null A) then U
+;	else then (removeoverlap((cdr A) (replace2 (car A) nil U)))
+;
+;
+;replace2(A B L)			#replaces all instances of A with B in given List L, including sublists
+;	if (null L) then L		#ceases recursive call at end of list
+;	else 
+;		(if (atom (car L)		#if the first element of L is an atom, proceed as in replace1. Else, recurse on that list
+;			(if (eq (car L) A) then (append B (replace2 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
+;			else (append (cons (car L) NIL) (replace2 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
+;
+;
+;getoverlap(S U)		#returns list of overlaps between each subset of S and U
 ;	if (null S) then S	#no more subsets of S left. stop recursing
 ;	else (append (cons (common (car S) U) NIL) (getoverlap((cdr S) U)))		#returns overlap of current element as well as recurses onto next element
 ;
 ;
-;
-;
 ;getcover(U S)				#returns the set of subsets of S which span list of numbers N. 
 ;	if (null U) then NIL		#N is already spanned. Stop recursion. This is step 2 in solution outline.
-;	let (O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
-;	let (ind maxind(O))		#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
+;	let*(
+;		(O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
+;		(ind maxind(O))			#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
+;		(A getind(ind S))		#retrieves the list A with the most overlap with U from S
+;		(U removeoverlap(A U))		#removes all elements in A from U so we can recurse on the remaining elements.
+;		getcover(U S)			#recurses on list of remaining values.
+;	)
 ;	
 ;	
 ;	
 ;	
-;	
-;
-;
-;
-;
-;
+
+
+(defun common(A B)
+	(if (null A)
+		0
+		(if (null (member (car A) B))
+			(common (cdr A) B)
+			(+ 1 (common (cdr A) B))
+		)
+	)
+)
+
+(defun getoverlap(S U)
+	(if (null S)
+		S
+		(append (cons (common (car S) U) NIL) (getoverlap (cdr S) U))
+	)
+)
