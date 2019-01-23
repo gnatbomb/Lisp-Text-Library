@@ -148,16 +148,18 @@
 ;
 ;
 ;maxind(O)			#returns the index of the largest value in list O. this is 2b in solution outline
-;	let (maxval maxinlist(O))
-;	valind(maxval O)
+;	let*
+;	(
+;		(maxval maxinlist(O)) 
+;		(valind(maxval O))
+;	)
+;	
 ;	
 ;
 ;valind(val O)			#returns the index of the first instance of val in O
 ;	if (null O) then O
 ;	else if (eq (car O) val) then 0
 ;	else 1 + valind(val (cdr O))
-;
-;
 ;
 ;
 ;maxinlist(O)			#returns the value of the largest element in the list O
@@ -199,18 +201,22 @@
 ;		getcover(U S)			#recurses on list of remaining values.
 ;	)
 ;	
-;	
-;	
-;	
 
+;removeoverlap(A U)		#removes all elements from U which also appear in A
+;	if (null A) then U
+;	else then (removeoverlap((cdr A) (replace2 (car A) nil U)))
 
-(defun common(A B)
+(defun removeoverlap(A U)
 	(if (null A)
-		0
-		(if (null (member (car A) B))
-			(common (cdr A) B)
-			(+ 1 (common (cdr A) B))
-		)
+		U
+		(removeoverlap (cdr A) (replace2 (car A) nil U))
+	)
+)
+
+(defun getind(ind S)
+	(if (<= ind 0)
+		(car S)
+		(getind (- ind 1) (cdr S))
 	)
 )
 
@@ -220,3 +226,54 @@
 		(append (cons (common (car S) U) NIL) (getoverlap (cdr S) U))
 	)
 )
+
+(defun valind(val O)
+	(if (null O)
+		O
+		(if (eq (car O) val))
+			0
+			(+ 1 (valind(val (cdr O))))
+		)
+	)
+)
+
+(defund maxind(O)
+	(let*
+		(
+			(maxval (maxinlist O))
+			(valind (maxval O))
+		)
+	)
+)
+
+
+;getcover(U S)				#returns the set of subsets of S which span list of numbers N. 
+;	if (null U) then NIL		#N is already spanned. Stop recursion. This is step 2 in solution outline.
+;	let*(
+;		(O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
+;		(ind maxind(O))			#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
+;		(A getind(ind S))		#retrieves the list A with the most overlap with U from S
+;		(newU removeoverlap(A U))		#removes all elements in A from U so we can recurse on the remaining elements.
+;		getcover(newU S)			#recurses on list of remaining values.
+;	)
+;
+
+(defun getcover(U S)
+	(if (null U)
+		U
+		(let*
+			(
+			(O (getoverlap S U))
+			(ind (maxind O))
+			(A (getind ind S))
+			(newU (removeoverlap(A U)))
+			(getcover newU S)
+			)
+		)
+	)
+)
+
+(defun setcover(N S)
+	(getcover (numbers N) S)
+
+
