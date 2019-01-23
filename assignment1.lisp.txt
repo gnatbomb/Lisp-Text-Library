@@ -1,15 +1,12 @@
-
-
-
-
+;
+;
+;
 ; Question 1
 ; issorted(L)
 ;	if null (cdr L) then T					#if the next element is nil, then list is sorted
 ;	else if (> (car L) (car (cdr L))) then NIL		#if the current front element is > next element, list is not sorted. return nil.
 ;	else issorted(cdr L)					#recursive call on list excluding first element
-;	
 ;
-
 (defun issorted (L)
 	(if (null (cdr L))
 		T
@@ -19,21 +16,16 @@
 		)
 	)
 )
-
-
 ;Question 2
 ; numbers(N)
 ;	if (>= 0 N) then NIL				#N is 0 or less
 ;	else (append (numbers(N - 1)) (cons N NIL))	#Adds N to the end of the return list. Decrements N and makes recursive call.
-
 (defun numbers(N)
 	(if (>= 0 N)
 		NIL
 		(append (numbers (- N 1)) (cons N NIL))
 	)
 )
-
-
 ;Question 3							#reverse the list using helper function defined as myreverse, then compare using equals function
 ;
 ;myreverse(L)							#reverses the order of a list
@@ -42,19 +34,15 @@
 ;
 ;palindrome(L)
 ;	equal (L myreverse(L))					#sees if the list is identical to itself when reversed.	
-
 (defun myreverse(L)
 	(if (null L)
 		L
 		(append (myreverse (cdr L)) (cons (car L) NIL))
 	)
 )
-
 (defun palindrome(L)
 	(equal L (myreverse L))
 )
-
-
 ;Question 4
 ;
 ;replace1(A B L)			#replaces all instances of A with B in given List L, ignoring sublists
@@ -62,7 +50,6 @@
 ;	else 
 ;		(if (eq (car L) A) then (append B (replace1 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
 ;		else (append (cons (car L) NIL) (replace1 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
-
 (defun replace1(A B L)
 	(if (null L)
 		L
@@ -72,7 +59,6 @@
 		)
 	)
 )
-
 ;
 ;replace2(A B L)			#replaces all instances of A with B in given List L, including sublists
 ;	if (null L) then L		#ceases recursive call at end of list
@@ -81,7 +67,6 @@
 ;			(if (eq (car L) A) then (append B (replace2 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
 ;			else (append (cons (car L) NIL) (replace2 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
 ;		else (append (cons (replace2(A B (car L) NIL) (replace2 A B (cdr L)) NIL))	#recurses on first element of list, then proceeds accordingly
-
 (defun replace2(A B L)
 	(if (null L)
 		L
@@ -94,8 +79,6 @@
 		)
 	)
 )
-
-
 ;Question 5
 ;
 ;common(A B)				#counts how many atoms in list A are also in list B. Atoms in a list never repeat.
@@ -103,7 +86,6 @@
 ;	else if (null (member (car A) B)) then (common (cdr A) B))	#returns true if car(A) is not in B, and recurses on cdr(A)
 ;	else 1 + (common (cdr A) B))					#if car(A) was in B, then adds 1 and recurses on cdr(A)
 ;
-
 (defun common(A B)
 	(if (null A)
 		0
@@ -113,8 +95,6 @@
 		)
 	)
 )
-
-
 ;
 ;Question 6
 ;
@@ -125,10 +105,10 @@
 ;		b) Traverse O to find the index of the highest number.							(done)
 ;		c) Locate the subset A in S with the most overlapping values with U. 					(done)
 ;		d) remove A from S											(done)
-;		e) remove overlapping values between U and A from U							
-;		f) Store A in SOL (solution)
-;		g) recurse on new U and S lists
-;	3) return SOL
+;		e) remove overlapping values between U and A from U							(done)
+;		f) Store A in SOL (solution)										(done)
+;		g) recurse on new U and S lists										(done)
+;	3) return SOL						(done)
 ;
 ;
 ;
@@ -153,7 +133,6 @@
 ;		(maxval maxinlist(O)) 
 ;		(valind(maxval O))
 ;	)
-;	
 ;	
 ;
 ;valind(val O)			#returns the index of the first instance of val in O
@@ -201,63 +180,55 @@
 ;		getcover(U S)			#recurses on list of remaining values.
 ;	)
 ;	
-
-;removeoverlap(A U)		#removes all elements from U which also appear in A
-;	if (null A) then U
-;	else then (removeoverlap((cdr A) (replace2 (car A) nil U)))
-
 (defun removeoverlap(A U)
 	(if (null A)
 		U
 		(removeoverlap (cdr A) (replace2 (car A) nil U))
 	)
 )
-
 (defun getind(ind S)
 	(if (<= ind 0)
 		(car S)
 		(getind (- ind 1) (cdr S))
 	)
 )
-
 (defun getoverlap(S U)
 	(if (null S)
 		S
 		(append (cons (common (car S) U) NIL) (getoverlap (cdr S) U))
 	)
 )
-
 (defun valind(val O)
 	(if (null O)
 		O
-		(if (eq (car O) val))
+		(if (eq (car O) val)
 			0
-			(+ 1 (valind(val (cdr O))))
+			(+ 1 (valind val (cdr O)))
 		)
 	)
 )
-
-(defund maxind(O)
+(defun maxinlist(O)
+	(if (null O)
+		0
+		(let*
+			(
+				(best (maxinlist (cdr O)))
+			)
+			(if (< best (car O))
+				(car O)
+				best
+			)
+		)
+	)
+)
+(defun maxind(O)
 	(let*
 		(
 			(maxval (maxinlist O))
-			(valind (maxval O))
 		)
+	(valind maxval O)
 	)
 )
-
-
-;getcover(U S)				#returns the set of subsets of S which span list of numbers N. 
-;	if (null U) then NIL		#N is already spanned. Stop recursion. This is step 2 in solution outline.
-;	let*(
-;		(O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
-;		(ind maxind(O))			#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
-;		(A getind(ind S))		#retrieves the list A with the most overlap with U from S
-;		(newU removeoverlap(A U))		#removes all elements in A from U so we can recurse on the remaining elements.
-;		getcover(newU S)			#recurses on list of remaining values.
-;	)
-;
-
 (defun getcover(U S)
 	(if (null U)
 		U
@@ -266,14 +237,12 @@
 			(O (getoverlap S U))
 			(ind (maxind O))
 			(A (getind ind S))
-			(newU (removeoverlap(A U)))
-			(getcover newU S)
+			(newU (removeoverlap A U))
 			)
+			(getcover newU S)
 		)
 	)
 )
-
 (defun setcover(N S)
 	(getcover (numbers N) S)
-
-
+)
