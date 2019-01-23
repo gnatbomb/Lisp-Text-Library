@@ -154,15 +154,14 @@
 ;
 ;removeoverlap(A U)		#removes all elements from U which also appear in A
 ;	if (null A) then U
-;	else then (removeoverlap((cdr A) (replace2 (car A) nil U)))
+;	else then (removeoverlap((cdr A) (removeElement (car A) U)))
 ;
 ;
-;replace2(A B L)			#replaces all instances of A with B in given List L, including sublists
-;	if (null L) then L		#ceases recursive call at end of list
-;	else 
-;		(if (atom (car L)		#if the first element of L is an atom, proceed as in replace1. Else, recurse on that list
-;			(if (eq (car L) A) then (append B (replace2 A B (cdr L)) NIL)	#First element in L is A. replace with B, and recurse on (cdr L)
-;			else (append (cons (car L) NIL) (replace2 A B (cdr L)) NIL)	#First element in L isnt A. add it to list, and recurse on (cdr L)
+;removeElement(E U)		#removes all instances of element E from list U 
+;	if (null U) then U
+;	else then (if (eq (car U) E) then (removeElement E (cdr U))
+;	else (append (cons (car U) NIL) (removeElement E (cdr U)))
+;
 ;
 ;
 ;getoverlap(S U)		#returns list of overlaps between each subset of S and U
@@ -176,14 +175,23 @@
 ;		(O getoverlap(S U))		#returns list O of the number of overlapping characters for each subset of S and U. This is part 2a of solution.
 ;		(ind maxind(O))			#stores the index of the subset with the highest number of overlaps in "ind". This is part 2b of solution.
 ;		(A getind(ind S))		#retrieves the list A with the most overlap with U from S
-;		(U removeoverlap(A U))		#removes all elements in A from U so we can recurse on the remaining elements.
-;		getcover(U S)			#recurses on list of remaining values.
+;		(newU removeoverlap(A U))		#removes all elements in A from U so we can recurse on the remaining elements.
+;		getcover(newU S)			#recurses on list of remaining values.
 ;	)
 ;	
+(defun removeElement(E U)
+	(if (null U) 
+		U
+		(if (eq (car U) E)
+			(removeElement E (cdr U))
+			(append (cons (car U) NIL) (removeElement E (cdr U)))
+		)	
+	)
+)
 (defun removeoverlap(A U)
 	(if (null A)
 		U
-		(removeoverlap (cdr A) (replace2 (car A) nil U))
+		(removeoverlap (cdr A) (removeElement (car A) U))
 	)
 )
 (defun getind(ind S)
@@ -239,7 +247,7 @@
 			(A (getind ind S))
 			(newU (removeoverlap A U))
 			)
-			(getcover newU S)
+			(append (cons A NIL) (getcover newU S))
 		)
 	)
 )
